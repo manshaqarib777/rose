@@ -48,7 +48,10 @@ class UploadMediaController extends Controller
 				'video/avi',
 				'video/x-flv',
 				'audio/x-matroska',
-				'audio/mpeg'
+				'audio/mpeg',
+				'application/x-zip-compressed',
+				'application/zip',
+				'application/pdf'
 			];
 		}
 
@@ -86,9 +89,9 @@ class UploadMediaController extends Controller
 						$this->uploadVideo($item);
 						break;
 
-					case 'audio':
+					default:
 						$this->uploadMusic($item);
-						break;
+                    break;
 				}
 			} // foreach
 

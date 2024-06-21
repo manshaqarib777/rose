@@ -73,24 +73,23 @@
 
                     @if ($offlineStreams->count() != 0)
                         <div class="mb-4">
-                            <h5 class="mb-3 font-montserrat"><i class="bi bi-camera-video mr-1"></i>{{ trans('general.upload_media') }}</h5>
 
                             <div class=""
                                 style="display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));">
 
                                 @foreach ($offlineStreams as $offlineStream)
                                     <div class="" style="overflow: hidden;">
-                                        <a href="#"  class="w-100 cursor-pointer">
-                                            <div class="box-card w-100 p-2 h-100 rounded cursor-pointer" onclick='window.location.href="#"'
+                                        <a href="{{route('videoDetail', [$offlineStream->user->username,$offlineStream->id])}}"  class="w-100 cursor-pointer">
+                                            <div class="box-card w-100 p-2 h-100 rounded cursor-pointer" onclick='window.location.href="{{route("videoDetail", [$offlineStream->user->username,$offlineStream->id])}}"'
                                                 style="background: @if($offlineStream->thumbnail != null) url('{{ Helper::getFile(config('path.livestream') . $offlineStream->thumbnail) }}') @endif #303030 center center; background-size: cover;">
                                                 @if($offlineStream->vr_check)
                                                     <div class="d-flex align-items-center justify-content-end" style="gap: 8px;">
-                                                        <a href="#" class="badge badge-sm bg-info">VR</a>
+                                                        <a href="{{route('videoDetail', [$offlineStream->user->username,$offlineStream->id])}}" class="badge badge-sm bg-info">VR</a>
                                                     </div>
                                                 @endif
 
                                                 <p class="mb-5 mt-5 text-center fs-7">
-                                                    {{ Str::limit($offlineStream->classification, 100, '...') }}
+                                                    {{ Str::limit($offlineStream->name, 100, '...') }}
                                                 </p>
 
                                                 <div class="d-flex align-items-end justify-content-between">

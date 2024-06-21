@@ -535,6 +535,9 @@ Route::group(['middleware' => 'private.content'], function() {
 	// Profile User
 	Route::get('{slug}/post/{id}', [UserController::class, 'postDetail'])->where('slug','[A-Za-z0-9\_-]+')->name('profile');
 
+	Route::get('{slug}/video/{id}', [UserController::class, 'videoDetail'])->where('slug','[A-Za-z0-9\_-]+')->name('videoDetail');
+
+
 });//<------ Private content
 
 

@@ -18,6 +18,7 @@ class OfflineStreamingsController extends Controller
     public function create(Request $request)
     {
         $request->validate([
+            'name' => 'required',
             'classification' => 'required',
             'category_id' => 'required|exists:categories,id',
             'fileuploader-list-thumbnail' => 'required',
@@ -27,6 +28,7 @@ class OfflineStreamingsController extends Controller
 
         $offline          = new OfflineStreamings();
         $offline->user_id = auth()->id();
+        $offline->name    = $request->input('name');
         $offline->classification    = $request->input('classification');
         $offline->vr_check = $request->vr_check ? true : false;
         $offline->category_id = $request->input('category_id');

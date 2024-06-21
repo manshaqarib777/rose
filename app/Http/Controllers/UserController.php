@@ -35,6 +35,7 @@ use App\Events\SubscriptionDisabledEvent;
 use App\Jobs\EncodeVideoWelcomeMessage;
 use App\Models\LiveStreamingPrivateRequest;
 use App\Models\MediaWelcomeMessage;
+use App\Models\OfflineStreamings;
 use Illuminate\Support\Facades\Validator;
 use Phattarachai\LaravelMobileDetect\Agent;
 use Illuminate\Support\Facades\Notification;
@@ -460,6 +461,27 @@ class UserController extends Controller
         'updates' => $user->updatesPostDetail,
         'updatesCount' => $updatesCount,
         'inPostDetail' => true,
+        'users' => $users
+      ]
+    );
+  }
+
+
+  public function videoDetail($slug, $id)
+  {
+    $user = User::where('username', '=', $slug)
+      ->where('status', 'active')
+      ->firstOrFail();
+
+    $stream = OfflineStreamings::findOrFail($id);
+
+    $users = $this->userExplore();
+
+    return view(
+      'users.video-detail',
+      [
+        'user' => $user,
+        'stream' => $stream,
         'users' => $users
       ]
     );

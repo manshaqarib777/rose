@@ -91,15 +91,14 @@ class UploadMediaLivestreamController extends Controller
 					'uploaded' => true,
 					'replaced' => false
 				];
-
 				switch ($item['format']) {
 					case 'image':
 							$this->resizeImage($item['name'], $item['extension']);
 						break;
 
-					case 'video':
+					default:
 							$this->uploadVideo($item['name']);
-						break;
+                    break;
 				}
 			}// foreach
 
@@ -188,14 +187,7 @@ class UploadMediaLivestreamController extends Controller
         */
         protected function insertImage($image)
         {
-            LiveStreamings::create([
-                'user_id' => auth()->id(),
-                'livestream_image' => $image,
-                'name' => 'photo'.rand(0,9),
-                'channel' => 'live_' . str_random(5) . '_' . auth()->id(),
-                'price' => 0,
-                'availability' =>  'everyone_free'
-            ]);
+
 
         }// end method insertImage
 
@@ -207,15 +199,6 @@ class UploadMediaLivestreamController extends Controller
 	protected function uploadVideo($video)
 	{
 		$path = config('path.livestream');
-
-		LiveStreamings::create([
-            'user_id' => auth()->id(),
-            'livestream_image' => $video,
-            'name' => 'photo'.rand(0,9),
-            'channel' => 'live_' . str_random(5) . '_' . auth()->id(),
-            'price' => 0,
-            'availability' =>  'everyone_free'
-        ]);
 
 		  // Move file to Storage
 		  if ($this->settings->video_encoding == 'off') {
@@ -253,7 +236,6 @@ class UploadMediaLivestreamController extends Controller
 		// PATH
 		$local = 'temp/';
 
-		LiveStreamings::where('livestream_image', $this->request->file)->delete();
 
 		// Delete local file
 		Storage::disk('default')->delete($local.$this->request->file);

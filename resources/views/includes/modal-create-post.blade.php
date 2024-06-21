@@ -37,6 +37,16 @@
                             enctype="multipart/form-data">
 
                             @csrf
+                            <label>{{ __('Name') }}</label>
+                            <div class="form-group">
+                                <div class="input-group mb-4">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="bi bi-lightning-charge"></i></span>
+                                    </div>
+                                    <input type="text" autocomplete="off" class="form-control" name="name"
+                                        placeholder="{{ __('auth.name') }} *">
+                                </div>
+                            </div><!-- End form-group -->
 
                             <label>{{ __('Category') }}</label>
                             <div class="input-group mb-4">
@@ -83,12 +93,12 @@
                             <div class="form-group">
                                 <label>{{ __('Content') }}</label>
                                 <input type="file" name="content"
-                                    accept="image/*,video/mp4,video/x-m4v,video/quicktime,audio/mp3">
+                                    accept="image/*,video/mp4,video/x-m4v,video/quicktime,audio/mp3,.zip,application/zip,application/x-zip-compressed">
                             </div>
                             <div class="form-group" id='showScript' style="display: none;">
                                 <label>{{ __('Script') }}</label>
                                 <input type="file" name="script"
-                                    accept="image/*,video/mp4,video/x-m4v,video/quicktime,audio/mp3">
+                                    accept="image/*,video/mp4,video/x-m4v,video/quicktime,audio/mp3,.zip,application/zip,application/x-zip-compressed">
                             </div>
 
                             <div class="alert alert-danger display-none mb-0 mt-3" id="errorOffline">

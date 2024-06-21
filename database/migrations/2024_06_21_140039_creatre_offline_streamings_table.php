@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('offline_streamings', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('classification');
             $table->string('thumbnail');
             $table->string('content');
