@@ -12,6 +12,7 @@ use App\Models\StoryFonts;
 use Illuminate\Http\Request;
 use App\Models\AdminSettings;
 use App\Models\LiveStreamings;
+use App\Models\OfflineStreamings;
 use App\Models\Widget;
 use League\Glide\ServerFactory;
 use Illuminate\Support\Facades\Schema;
@@ -76,9 +77,9 @@ class HomeController extends Controller
       ->select('live_streamings.*')
       ->paginate(12);
 
-    
-    $widgets = Widget::where('type','home')->orderBy('serial_no')->limit(5)->get();  
-    
+
+    $widgets = Widget::where('type','home')->orderBy('serial_no')->limit(5)->get();
+
 
     $c_streams = null;
     foreach($widgets as $widget){
@@ -94,8 +95,8 @@ class HomeController extends Controller
         ->select('live_streamings.*')
         ->paginate(12);
       }
-    } 
-   
+    }
+
 
     if ($this->request->input('page') > $users->lastPage()) {
       abort('404');
@@ -470,7 +471,7 @@ class HomeController extends Controller
 
     $s_childs = [];
     if($category->parent_id == null || $category->parent->parent_id == null){
-      $s_childs = $category->child; 
+      $s_childs = $category->child;
     }
 
     if($category->parent){
@@ -479,156 +480,19 @@ class HomeController extends Controller
       }
     }
 
-    $childs = $category->child; 
+    $childs = $category->child;
+
+    $offlineStreams = OfflineStreamings::where('offline_streamings.category_id', 'LIKE', '%' . $category->id . '%')
+        ->orderBy('offline_streamings.id', 'desc')
+        ->select('offline_streamings.*')->get();
 
     return view('index.live-categories', [
       'users' => $users,
+      'offlineStreams' => $offlineStreams,
       'title' => $title,
       'slug' => $slug,
       'childs' => $childs,
       's_childs' => $s_childs,
-      'image' => $category->image,
-      'keywords' => $category->keywords,
-      'description' => $category->description,
-      'isCategory' => true,
-    ]);
-
-    switch ($type) {
-      case 'featured':
-        $orderBy = 'featured_date';
-        $title = $title . ' - ' . __('general.featured_creators');
-        break;
-
-      case 'more-active':
-        $orderBy = 'COUNT(updates.id)';
-        $title = $title . ' - ' . __('general.more_active_creators');
-        break;
-
-      case 'new':
-        $orderBy = 'id';
-        $title = $title . ' - ' . __('general.new_creators');
-        break;
-
-      case 'free':
-        $orderBy = 'free_subscription';
-        $title = $title . ' - ' . __('general.creators_with_free_subscription');
-        break;
-
-      default:
-        $orderBy = 'COUNT(subscriptions.id)';
-        break;
-    }
-
-    if ($type == 'free') {
-      $users = User::where('users.status', 'active')
-        ->where('categories_id', 'LIKE', '%' . $category->id . '%')
-        ->whereVerifiedId('yes')
-        ->where('id', '<>', $this->settings->hide_admin_profile == 'on' ? 1 : 0)
-        ->whereFreeSubscription('yes')
-        ->whereHideProfile('no')
-        ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%');
-
-      $this->filterByGenderAge($users);
-
-      $users = $users->orderBy($orderBy, 'desc')
-        ->simplePaginate(12);
-    } else {
-
-      $data = User::where('users.status', 'active');
-
-      $whereRawFeatured = $type == 'featured' ? 'featured = "yes"' : 'users.status = "active"';
-
-      $data->where('users.status', 'active')
-        ->where('categories_id', 'LIKE', '%' . $category->id . '%')
-        ->whereVerifiedId('yes')
-        ->where('users.id', '<>', $this->settings->hide_admin_profile == 'on' ? 1 : 0)
-        ->whereRelation('plans', 'status', '1')
-        ->whereFreeSubscription('no')
-        ->whereHideProfile('no')
-        ->whereRaw($whereRawFeatured)
-        ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%');
-
-      $this->filterByGenderAge($data);
-
-      $data->orWhere('users.status', 'active')
-        ->where('categories_id', 'LIKE', '%' . $category->id . '%')
-        ->whereVerifiedId('yes')
-        ->where('users.id', '<>', $this->settings->hide_admin_profile == 'on' ? 1 : 0)
-        ->whereFreeSubscription('yes')
-        ->whereHideProfile('no')
-        ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%')
-        ->whereRaw($whereRawFeatured);
-
-      $this->filterByGenderAge($data);
-
-      if ($type == 'more-active') {
-        $data->leftjoin('updates', 'updates.user_id', '=', 'users.id');
-      }
-
-      if (!$type) {
-        $data->leftjoin('plans', 'plans.user_id', '=', 'users.id')
-          ->leftjoin('subscriptions', 'subscriptions.stripe_price', '=', 'plans.name');
-
-        $data->orWhere('subscriptions.stripe_id', '=', '')
-          ->where('ends_at', '>=', now())
-          ->where('categories_id', 'LIKE', '%' . $category->id . '%')
-          ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%');
-
-        $this->filterByGenderAge($data);
-
-        $data->orWhere('subscriptions.stripe_id', '<>', '')
-          ->where('stripe_status', 'active')
-          ->where('categories_id', 'LIKE', '%' . $category->id . '%')
-          ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%');
-
-        $this->filterByGenderAge($data);
-
-        $data->orWhere('subscriptions.stripe_id', '<>', '')
-          ->where('ends_at', '>=', now())
-          ->where('stripe_status', 'canceled')
-          ->where('categories_id', 'LIKE', '%' . $category->id . '%')
-          ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%');
-
-        $this->filterByGenderAge($data);
-
-        $data->orWhere('subscriptions.stripe_id', '=', '')
-          ->whereFree('yes')
-          ->where('categories_id', 'LIKE', '%' . $category->id . '%')
-          ->where('blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%');
-
-        $this->filterByGenderAge($data);
-      }
-
-
-      $users = $data->groupBy('users.id')
-        ->orderBy(\DB::raw($orderBy), 'DESC')
-        ->orderBy('users.id', 'ASC')
-        ->select(
-          'users.id',
-          'users.name',
-          'users.username',
-          'users.avatar',
-          'users.cover',
-          'users.hide_name',
-          'users.verified_id',
-          'users.free_subscription',
-          'users.featured'
-        )
-        ->with([
-          'media' => fn ($q) =>
-          $q->select('type')
-        ])
-        ->simplePaginate(12);
-    }
-
-    if (request()->ajax()) {
-      return view('includes.ajax-listing-creators', ['users' => $users])->render();
-    }
-
-    return view('index.categories', [
-      'users' => $users,
-      'title' => $title,
-      'slug' => $slug,
       'image' => $category->image,
       'keywords' => $category->keywords,
       'description' => $category->description,
@@ -847,14 +711,14 @@ class HomeController extends Controller
       abort('404');
     }
 
-    $widgets = Widget::where('type','header')->orderBy('serial_no')->limit(1)->get();  
+    $widgets = Widget::where('type','header')->orderBy('serial_no')->limit(1)->get();
     $w_categories = [];
     foreach($widgets as $widget){
         $content = $widget->content ?? null;
         if($content != null){
             $w_categories[$content->name] = $content->child;
         }
-    } 
+    }
 
     return view('index.creators-live', [
       'users' => $users,

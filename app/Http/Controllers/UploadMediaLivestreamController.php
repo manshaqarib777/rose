@@ -34,24 +34,41 @@ class UploadMediaLivestreamController extends Controller
      *
      * @return void
      */
-	public function store() 
+	public function store()
 	{
 		$publicPath = public_path('temp/');
 		$file = strtolower(auth()->id().uniqid().time().str_random(20));
 
-		if ($this->settings->video_encoding == 'off') {
-			$extensions = ['png','jpeg','jpg','gif'];
-		} else {
-			$extensions = [
-				'png',
-				'jpeg',
-				'jpg',
-				'gif',
-	    	];
-		}
+
+        $extensions = [
+            'png',
+            'jpeg',
+            'jpg',
+            'gif',
+            'ief',
+            'video/mp4',
+            'video/quicktime',
+            'video/3gpp',
+            'video/mpeg',
+            'video/x-matroska',
+            'video/x-ms-wmv',
+            'video/vnd.avi',
+            'video/avi',
+            'video/x-flv',
+            'audio/x-matroska',
+            'audio/mpeg',
+            'application/x-zip-compressed',
+            'application/zip',
+            'application/pdf'
+        ];
+
+        $parameter = "";
+        foreach ($this->request->all() as $key => $value) {
+            $parameter = $key;
+        }
 
 		// initialize FileUploader
-		$FileUploader = new FileUploader('livestream_image', array(
+		$FileUploader = new FileUploader($parameter, array(
 			'limit' => 1,
 			'fileMaxSize' => floor($this->settings->file_size_allowed / 1024),
 			'extensions' => $extensions,
@@ -156,7 +173,7 @@ class UploadMediaLivestreamController extends Controller
 			}
 
 			// Insert in Database
-			$this->insertImage($fileName);
+			// $this->insertImage($fileName);
 
 			// Move file to Storage
 			$this->moveFileStorage($fileName, $path);
@@ -190,7 +207,7 @@ class UploadMediaLivestreamController extends Controller
 	protected function uploadVideo($video)
 	{
 		$path = config('path.livestream');
-		
+
 		LiveStreamings::create([
             'user_id' => auth()->id(),
             'livestream_image' => $video,
@@ -216,12 +233,12 @@ class UploadMediaLivestreamController extends Controller
 		$localFile = public_path('temp/'.$file);
 
         // dd($localFile);
-		
+
 		// Move the file...
        if( Storage::putFileAs($path, new File($localFile), $file)){
            unlink($localFile);
        }
-		
+
 		// Delete temp file
 
 	} // end method moveFileStorage
@@ -240,7 +257,7 @@ class UploadMediaLivestreamController extends Controller
 
 		// Delete local file
 		Storage::disk('default')->delete($local.$this->request->file);
-		
+
 		return response()->json([
         'success' => true
 	 ]);

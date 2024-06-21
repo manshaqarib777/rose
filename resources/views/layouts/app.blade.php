@@ -187,7 +187,7 @@
                 @include('includes.footer')
             @endif
 
-        @endif 
+        @endif
     @endif --}}
 
 
@@ -203,7 +203,7 @@
 
     @endguest
 
-    
+
 
     @if ($settings->live_streaming_status == 'on')
         @include('includes.modal-live-stream')
@@ -238,6 +238,7 @@
 
 @include('includes.javascript_general')
 
+@yield('script')
 @yield('javascript')
 
 <script src="{{ asset('public/js/fileuploader/livestream-img.js') }}"></script>

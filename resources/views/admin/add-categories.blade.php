@@ -13,7 +13,7 @@
 	<div class="row">
 
 		<div class="col-lg-12">
-			
+
       @include('errors.errors-forms')
 
 			<div class="card shadow-custom border-0">
@@ -95,4 +95,4 @@
 @section('javascript')
 
 <script type="text/javascript"></script>
-  @endsection
+@endsection

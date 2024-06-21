@@ -229,7 +229,7 @@ class UploadMediaController extends Controller
 
 		// Move file to Storage
 		if (config('settings.video_encoding') == 'off') {
-			$this->moveFileStorage($video, config('path.videos'));
+			$this->moveFileStorage($video['name'], config('path.videos'));
 		}
 	}
 
@@ -252,8 +252,8 @@ class UploadMediaController extends Controller
 			'file' => '',
 			'file_name' => '',
 			'file_size' => '',
-			'bytes' => $video['size'],
-			'mime' => $video['type'],
+			'bytes' => $music['size'],
+			'mime' => $music['type'],
 			'img_type' => '',
 			'token' => $this->getToken(),
 			'status' => $this->status,
@@ -261,7 +261,7 @@ class UploadMediaController extends Controller
 		]);
 
 		// Move file to Storage
-		$this->moveFileStorage($music, config('path.music'));
+		$this->moveFileStorage($music['name'], config('path.music'));
 	}
 
 	/**

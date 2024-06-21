@@ -23,7 +23,8 @@
                     <ul class="d-flex flex-wrap list-unstyled">
                         @foreach ($childs as $child)
                             <li class="nav-item">
-                                <a href="{{ url('category', $child->slug) }}" class="d-block nav-link text-capitalize" @if (Request::path() == "category/$child->slug") style="border-bottom: 1px solid var(--red);" @endif >{{ $child->name }}</a>
+                                <a href="{{ url('category', $child->slug) }}" class="d-block nav-link text-capitalize"
+                                    @if (Request::path() == "category/$child->slug") style="border-bottom: 1px solid var(--red);" @endif>{{ $child->name }}</a>
                             </li>
                         @endforeach
                     </ul>
@@ -46,16 +47,71 @@
 
 
                             </div><!-- row -->
-							                                @if ($users->hasPages())
-                                    <div class="w-100 d-block">
-                                        {{ $users->onEachSide(0)->appends([
-                                                'q' => request('q'),
-                                                'gender' => request('gender'),
-                                                'min_age' => request('min_age'),
-                                                'max_age' => request('max_age'),
-                                            ])->links() }}
+                            @if ($users->hasPages())
+                                <div class="w-100 d-block">
+                                    {{ $users->onEachSide(0)->appends([
+                                            'q' => request('q'),
+                                            'gender' => request('gender'),
+                                            'min_age' => request('min_age'),
+                                            'max_age' => request('max_age'),
+                                        ])->links() }}
+                                </div>
+                            @endif
+                        </div><!-- col-md-9 -->
+                    @else
+                        <div class="">
+                            <div class="my-5 text-center no-updates">
+                                <span class="btn-block mb-3">
+                                    <i class="fa fa-user-slash ico-no-result"></i>
+                                </span>
+                                <h4 class="font-weight-light">{{ trans('general.not_found_creators_category') }}</h4>
+                            </div>
+                        </div>
+                    @endif
+
+
+
+                    @if ($offlineStreams->count() != 0)
+                        <div class="mb-4">
+                            <h5 class="mb-3 font-montserrat"><i class="bi bi-camera-video mr-1"></i>{{ trans('general.upload_media') }}</h5>
+
+                            <div class=""
+                                style="display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));">
+
+                                @foreach ($offlineStreams as $offlineStream)
+                                    <div class="" style="overflow: hidden;">
+                                        <a href="#"  class="w-100 cursor-pointer">
+                                            <div class="box-card w-100 p-2 h-100 rounded cursor-pointer" onclick='window.location.href="#"'
+                                                style="background: @if($offlineStream->thumbnail != null) url('{{ Helper::getFile(config('path.livestream') . $offlineStream->thumbnail) }}') @endif #303030 center center; background-size: cover;">
+                                                @if($offlineStream->vr_check)
+                                                    <div class="d-flex align-items-center justify-content-end" style="gap: 8px;">
+                                                        <a href="#" class="badge badge-sm bg-info">VR</a>
+                                                    </div>
+                                                @endif
+
+                                                <p class="mb-5 mt-5 text-center fs-7">
+                                                    {{ Str::limit($offlineStream->classification, 100, '...') }}
+                                                </p>
+
+                                                <div class="d-flex align-items-end justify-content-between">
+                                                    <div class="d-flex align-items-end" style="gap: 5px;">
+                                                        <img src="{{ Helper::getFile(config('path.avatar') . $offlineStream->user->avatar) }}" width="40"
+                                                            height="30" alt="{{ $offlineStream->user->name }}" class="img-user-small" />
+
+                                                        <p class="mb-0 text-white fs-7">
+                                                            {{ $offlineStream->user->hide_name == 'yes' ? Str::limit($offlineStream->user->username, 6, '...') : Str::limit($offlineStream->user->name, 6, '...') }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </a>
+
                                     </div>
-                                @endif
+                                @endforeach
+
+                            </div><!-- row -->
                         </div><!-- col-md-9 -->
                     @else
                         <div class="">

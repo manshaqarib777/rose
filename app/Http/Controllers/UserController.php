@@ -453,7 +453,6 @@ class UserController extends Controller
     if ($uri != $uriCanonical) {
       return redirect($uriCanonical);
     }
-
     return view(
       'users.post-detail',
       [

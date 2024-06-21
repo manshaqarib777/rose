@@ -46,9 +46,9 @@
     <button class="btn btn-cover-upload p-lg-6 px-3" id="coverFile" onclick="$('#uploadCover').trigger('click');">
       <i class="fa fa-camera mr-lg-1"></i>  <span class="d-none d-lg-inline">{{__('general.change_cover')}}</span>
     </button>
-  
+
     <button class="btn btn-cover-upload px-3 deleteCover">
-      <i class="bi-trash3-fill"></i> 
+      <i class="bi-trash3-fill"></i>
     </button>
   </div>
 @endif
@@ -284,7 +284,7 @@
                     </div>
                   </div>
                 @endif
-                
+
           				<div class="container-fluid">
           					<div class="row">
           						<div class="col-md-4 col-6 mb-3">
@@ -405,7 +405,7 @@
     </div><!-- row -->
   </div><!-- container -->
 
-  
+
   @if ($user->verified_id == 'yes' && request('media') != 'shop')
   <div class="container py-4 pb-5">
     <div class="row">
@@ -614,7 +614,7 @@
         <div class="grid-updates position-relative" id="updatesPaginator">
           @include('includes.updates')
         </div>
-        @endif   
+        @endif
 
           @endif
       </div>
@@ -765,7 +765,7 @@
                 </select>
 
                 <textarea name="message" rows="" cols="40" maxlength="200" placeholder="{{__('general.message')}} ({{ __('general.optional') }})" class="form-control mt-2 textareaAutoSize"></textarea>
-                
+
                 </div><!-- /.form-group-->
             </div><!-- Modal body -->
 
