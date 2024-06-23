@@ -45,7 +45,7 @@
             @isset($s_childs)
                 <span class="borde">
                     @foreach ($s_childs as $child)
-                        <a class='d-flex align-items-center mb-2 @if (Request::path() == "category/$child->slug") bg-dark-transparent @endif'
+                        <a class='d-flex align-items-center mb-2 @if (Request::path() == "category/$child->slug" || ( isset($allCategories) && in_array($child->slug,$allCategories))) bg-dark-transparent @endif'
                             style="gap: 8px;" href="{{ url('category', $child->slug) }}">
                             <img src="{{ url('public/img-category', $child->image) }}" class="mr-2" width="25" />
                             {{ $child->name }}

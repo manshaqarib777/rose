@@ -453,50 +453,83 @@ class HomeController extends Controller
       'title' => $title
     ]);
   }
-
+  private function getUsers($category){
+    return LiveStreamings::whereType('normal')
+    // ->where('live_streamings.updated_at', '>', now()->subMinutes(5))
+    ->leftjoin('users', 'users.id', '=', 'live_streamings.user_id')
+    ->where('live_streamings.status', '0')
+    ->where('users.categories_id', 'LIKE', '%' . $category->id . '%')
+    ->where('users.blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%')
+    ->orderBy('live_streamings.id', 'desc')
+    ->select('live_streamings.*')
+    ->paginate(12);
+  }
+  private function getOffStreams($category){
+    return OfflineStreamings::with('user')->where('offline_streamings.category_id', 'LIKE', '%' . $category->id . '%')
+    ->orderBy('offline_streamings.id', 'desc')
+    ->select('offline_streamings.*')->get();
+  }
   public function category($slug, $type = false)
   {
     $category = Categories::where('slug', '=', $slug)->where('mode', 'on')->firstOrFail();
     $title    = \Lang::has('categories.' . $category->slug) ? __('categories.' . $category->slug) : $category->name;
-    $users = LiveStreamings::whereType('normal')
-        // ->where('live_streamings.updated_at', '>', now()->subMinutes(5))
-        ->leftjoin('users', 'users.id', '=', 'live_streamings.user_id')
-        ->where('live_streamings.status', '0')
-        ->where('users.categories_id', 'LIKE', '%' . $category->id . '%')
-        ->where('users.blocked_countries', 'NOT LIKE', '%' . Helper::userCountry() . '%')
-        ->orderBy('live_streamings.id', 'desc')
-        ->select('live_streamings.*')
-        ->paginate(12);
 
-
-    $s_childs = [];
+    $data = array();
+    $s_childs = array();
+    $allCategories = array();
     if($category->parent_id == null || $category->parent->parent_id == null){
       $s_childs = $category->child;
-    }
-
-    if($category->parent){
-      if($category->parent->parent_id == null){
-        $s_childs = $category->parent->child;
+      foreach ($s_childs as $key => $child) {
+         $data[$child->name]["users"] =  $this->getUsers($child);
+         $data[$child->name]["streams"] =  $this->getOffStreams($child);
       }
     }
 
-    $childs = $category->child;
+    $data[$category->name]["users"] =   $this->getUsers($category);
+    $data[$category->name]["streams"] =  $this->getOffStreams($category);
+    $allCategories[] = $category->slug;
+    $showAll = true;
 
-    $offlineStreams = OfflineStreamings::where('offline_streamings.category_id', 'LIKE', '%' . $category->id . '%')
-        ->orderBy('offline_streamings.id', 'desc')
-        ->select('offline_streamings.*')->get();
+    $childs = $category->child;
+    $parent = $category->parent;
+    if(!isset($parent)){
+        $parent = $category;
+    }
+
+    if(isset($category->parent)){
+        if($category->parent->parent_id == null){
+            $s_childs = $category->parent->child;
+        }
+        $data[$category->parent->name]["users"] =   $this->getUsers($category->parent);
+        $data[$category->parent->name]["streams"] =  $this->getOffStreams($category->parent);
+        $allCategories[] = $category->parent->slug;
+    }
+    if(isset($category->parent->parent)){
+        $childs = $category->parent->child;
+        if($category->parent->parent->parent_id == null){
+            $s_childs = $category->parent->parent->child;
+        }
+        $data[$category->parent->parent->name]["users"] =   $this->getUsers($category->parent->parent);
+        $data[$category->parent->parent->name]["streams"] =  $this->getOffStreams($category->parent->parent);
+        $allCategories[] = $category->parent->parent->slug;
+        $showAll = false;
+
+    }
+
 
     return view('index.live-categories', [
-      'users' => $users,
-      'offlineStreams' => $offlineStreams,
+      'data' => $data,
       'title' => $title,
       'slug' => $slug,
+      'parent' => $parent,
       'childs' => $childs,
       's_childs' => $s_childs,
       'image' => $category->image,
       'keywords' => $category->keywords,
       'description' => $category->description,
       'isCategory' => true,
+      'allCategories' => $allCategories,
+      'showAll' => $showAll
     ]);
   }
 

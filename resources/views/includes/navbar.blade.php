@@ -127,7 +127,7 @@
                         @endif
                     @endif
 
-                
+
                         {{-- <li class="nav-item mr-1">
                             <a @if (Helper::showLoginFormModal()) data-toggle="modal" data-target="#loginFormModal" @endif
                                 class="nav-link login-btn @if ($settings->registration_active == '0') btn btn-main btn-primary pr-3 pl-3 @endif"
@@ -148,7 +148,7 @@
                         <!-- ============ Menu Mobile ============-->
 
 						@auth
-							
+
 
                         @if (auth()->user()->role == 'admin')
                             <li class="nav-item dropdown d-lg-none mt-2 border-bottom">
@@ -299,7 +299,7 @@
                         </li>
                         <!-- =========== End Menu Mobile ============-->
 
-						
+
 						@endauth
 
 
@@ -328,7 +328,7 @@
                         @endif --}}
 
 
-						
+
 
 						<li class="nav-item dropdown d-lg-block">
                             <a href="{{ url('messages') }}" class="nav-link px-2" title="{{ __('general.messages') }}">
@@ -365,7 +365,7 @@
                             </a>
                         </li> --}}
 
-                        
+
 
                         {{-- <li class="nav-item dropdown d-lg-block d-none">
                             <a href="{{ url('notifications') }}" class="nav-link px-2"
@@ -387,7 +387,7 @@
                             </a>
                         </li>
 
-		
+
 						@guest
 						<li class="nav-item dropdown d-lg-block">
                             <a class="nav-link pl-2 " href="#" data-toggle="modal" data-target="#loginFormModal">
@@ -489,14 +489,14 @@
                             </div>
                         </li>
 						@endauth
-                        
+
                         {{-- <li class="nav-item">
                             <a class="nav-link btn-arrow btn-arrow-sm btn btn-main btn-primary pr-3 pl-3"
                                 href="{{ url('settings/page') }}">
                                 {{ auth()->user()->verified_id == 'yes' ? __('general.edit_my_page') : __('users.edit_profile') }}</a>
                         </li> --}}
 
-                 
+
 
                 </ul>
             </div>
@@ -510,17 +510,17 @@
                         $content = $top_category->content;
                     @endphp
                 <li class="nav-item">
-                    <a href="{{ url('category', $content->slug) }}" class="d-block nav-link" @if (Request::path() == "category/$content->slug") style="border-bottom: 1px solid var(--red);" @endif >{{ $content->name }}</a>
+                    <a href="{{ url('category', $content->slug) }}" class="d-block nav-link" @if (Request::path() == "category/$content->slug" || ( isset($allCategories) && in_array($content->slug,$allCategories))) style="border-bottom: 1px solid var(--red);" @endif >{{ $content->name }}</a>
                 </li>
                 @endif
-           
+
             @endforeach
-			
+
 			<li class="nav-item">
 				<a href="{{ url('shop') }}" class="d-block nav-link" @if(request()->is('shop')) style="border-bottom: 1px solid var(--red);" @endif>Shop</a>
 			</li>
 		</ul>
 	</div>
-	
+
 </header>
 
