@@ -243,9 +243,23 @@
 
 <script src="{{ asset('public/js/fileuploader/livestream-img.js') }}"></script>
 
+
 @auth
     <div id="bodyContainer"></div>
 @endauth
+
+<script>
+players.forEach(function(p){
+    p.on('play', event => {
+        const instance = event.detail.plyr;
+        console.log(instance.source);
+        console.log(instance.currentTime);
+        $.get("/public/video.php?filename=" + instance.source + "&timeline=" + instance.currentTime , function(data, status) {
+               console.log("Data: " + data + "\nStatus: " + status);
+        });
+    })
+});
+</script>
 </body>
 
 </html>

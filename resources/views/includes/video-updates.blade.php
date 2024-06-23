@@ -51,6 +51,7 @@
                     @php
                         $url = Helper::getFile(config('path.livestream') . $media);
                         $mimeType = Storage::mimeType(config('path.livestream') . $media);
+                        if($mimeType)
                         $fileSize = Storage::size(config('path.livestream') . $media);
 
                     @endphp
@@ -114,6 +115,7 @@
                         @php
                             $url = Helper::getFile(config('path.livestream') . $media);
                             $mimeType = Storage::mimeType(config('path.livestream') . $media);
+                            if($mimeType)
                             $fileSize = Storage::size(config('path.livestream') . $media);
                         @endphp
 

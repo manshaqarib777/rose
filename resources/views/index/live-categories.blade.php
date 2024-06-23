@@ -58,15 +58,6 @@
                                 </div>
                             @endif
                         </div><!-- col-md-9 -->
-                    @else
-                        <div class="">
-                            <div class="my-5 text-center no-updates">
-                                <span class="btn-block mb-3">
-                                    <i class="fa fa-user-slash ico-no-result"></i>
-                                </span>
-                                <h4 class="font-weight-light">{{ trans('general.not_found_creators_category') }}</h4>
-                            </div>
-                        </div>
                     @endif
 
 
@@ -112,15 +103,6 @@
 
                             </div><!-- row -->
                         </div><!-- col-md-9 -->
-                    @else
-                        <div class="">
-                            <div class="my-5 text-center no-updates">
-                                <span class="btn-block mb-3">
-                                    <i class="fa fa-user-slash ico-no-result"></i>
-                                </span>
-                                <h4 class="font-weight-light">{{ trans('general.not_found_creators_category') }}</h4>
-                            </div>
-                        </div>
                     @endif
                 </div>
             </div>
